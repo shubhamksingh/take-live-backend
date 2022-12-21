@@ -14,9 +14,11 @@ router.get("/", async (req, res) => {
 // get a single event
 router.get("/:id", async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id).populate("pending");
+    const event = await Event.findById(req.params.id).populate(["pending",  "attendees"]);
     res.status(200).json(event);
   } catch (err) {
+    console.log(err.message);
+    console.log('inside');
     res.status(500).json(err);
   }
 });
@@ -54,7 +56,7 @@ router.patch("/:id/accept", async (req, res) => {
     if (event.pending.includes(req.body.userId)) {
       await event.updateOne({ $pull: { pending: req.body.userId } });
       await event.updateOne({ $push: { attendees: req.body.userId } });
-      const newEvent = await Event.findById(req.params.id).populate("pending");
+      const newEvent = await Event.findById(req.params.id).populate(["pending", "attendees"]);
       res.status(200).json(newEvent);
     } else {
       res.status(403).json("You have not sent a request yet");
@@ -70,7 +72,7 @@ router.patch("/:id/reject", async (req, res) => {
     const event = await Event.findById(req.params.id);
     if (event.pending.includes(req.body.userId)) {
       await event.updateOne({ $pull: { pending: req.body.userId } });
-      const newEvent = await Event.findById(req.params.id).populate("pending");
+      const newEvent = await Event.findById(req.params.id).populate(["pending", "attendees"]);
       // 'The request has been rejected'
       res.status(200).json(newEvent);
     } else {
