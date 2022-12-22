@@ -41,8 +41,9 @@ router.patch('/:id/accept', async (req, res) => {
         const event = await Event.findById(req.params.id);
         if (event.pending.includes(req.body.userId)) {
             await event.updateOne({ $pull: { pending: req.body.userId } });
-            await event.updateOne({ $push: { attending: req.body.userId } });
-            res.status(200).json('The request has been accepted');
+            await event.updateOne({ $push: { attendees: req.body.userId } });
+            const newEvent = await Event.findById(req.params.id).populate('pending');
+            res.status(200).json(newEvent);
         } else {
             res.status(403).json('You have not sent a request yet');
         }
@@ -52,6 +53,24 @@ router.patch('/:id/accept', async (req, res) => {
     }
 }
 );
+
+router.patch('/:id/reject', async (req, res) => {
+    try {
+        const event = await Event.findById(req.params.id);
+        if (event.pending.includes(req.body.userId)) {
+            await event.updateOne({ $pull: { pending: req.body.userId } });
+            const newEvent = await Event.findById(req.params.id).populate('pending');
+            // 'The request has been rejected'
+            res.status(200).json(newEvent);
+        } else {
+            res.status(403).json('You have not sent a request yet');
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
+);
+
 
 
 
