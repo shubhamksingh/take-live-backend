@@ -2,6 +2,8 @@ const router = require('express').Router();
 const User = require('../Models/user');
 const jwt = require('jsonwebtoken');
 
+
+//signup route
 router.post('/signup', async (req, res) => {
     const user = new User({
         name: req.body.name,
@@ -20,6 +22,9 @@ router.post('/signup', async (req, res) => {
     }
 });
 
+
+
+//login route
 router.post('/login', async (req, res) => {
         const user = await User.findOne({username: req.body.username});
         // !user && res.status(401).json('Wrong credentials');
