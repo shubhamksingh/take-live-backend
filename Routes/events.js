@@ -3,7 +3,7 @@ const Event = require('../Models/events');
 
 router.get('/', async (req, res) => {
     try {
-        const events = await Event.find().populate('pending');
+        const events = await Event.find();
         res.status(200).json(events);
     } catch (err) {
         res.status(500).json(err);
