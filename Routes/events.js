@@ -26,7 +26,7 @@ router.patch('/:id/request', async (req, res) => {
         const event = await Event.findById(req.params.id);
         if (!event.pending.includes(req.body.userId)) {
             await event.updateOne({ $push: { pending: req.body.userId } });
-            res.status(200).json('The request has been sent');
+            res.status(200).json({message : 'The request has been sent', event});
         } else {
             res.status(403).json('You have already sent a request');
         }
